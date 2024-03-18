@@ -1,2 +1,2 @@
 # 2GisApi
-## На данной странице представлено построение маршрута с помощью 2 gisApi , так же осуществляется поиск  адресов по координатам, и определение времени пути.(Проект в стадии разработки)
+## This page shows the construction of a route using 2 gisApi , as well as searching for addresses by coordinates, and determining the travel time.(The project is under development)
