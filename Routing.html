@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="Routing.css">
+</head>
+<body>
+<div class="container">
+    <div class="time">В пути, осталось <span class="value_time"></span></div>
+    <div class="exit">
+        <img src="img/exit.png">
+    </div>
+    <div id="map" class="map"></div>
+    <div class="title_zakaz">
+        Заказ №23456789 - 1246
+    </div>
+    <div class="adress">
+        Адрес
+    </div>
+    <div class="title_adres">
+        <div class="dotA">
+            <img src="img/IconmapsA.png">
+            <div class="dot_container">
+                <div class="dot_top"><span class="adress1"></span></div>
+                <div class="dot_bottom"><span class="gorod1"></span></div>
+            </div>
+        </div>
+        <img  class="img_line" src="img/Line.png">
+        <div class="dotB">
+            <img src="img/IconmapsB.png">
+            <div class="dot_container">
+                <div class="dot_top"><span class="adress2"></span></div>
+                <div class="dot_bottom"><span class="gorod2"></span></div>
+            </div>
+        </div>
+    </div>
+    <div class="sodershc_zakaza">
+        <div class="material">
+            <div class="title_mat">Материал</div>
+            <div class="mat">Сталь</div>
+            <div class="mat">Дерево</div>
+            <div class="mat">Пластик</div>
+        </div>
+        <div class="ves">
+            <div class="title_mat">Вес</div>
+            <div class="vs">30 т</div>
+            <div class="vs">20 т</div>
+            <div class="vs">10 т</div>
+        </div>
+    </div>
+    <button class="button_header">
+        Открыть в приложении
+    </button>
+</div>
+<script src="https://mapgl.2gis.com/api/js/v1"></script>
+<script src="https://maps.api.2gis.ru/2.0/loader.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.css"/>
+
+<script>
+    function initMap() {
+        var map = new L.Map('map', {
+            center: [57.885, 34.049],
+            zoom: 5
+        });
+        var marker = L.marker([57.885, 34.049]).addTo(map);
+        let coord = [];
+        function getRoute() {
+            var url = 'http://routing.api.2gis.com/routing/7.0.0/global?key=?';
+            var requestData = {
+                points: [
+                    {
+                        type: 'stop',
+                        lon: 29.963884,
+                        lat: 59.527684
+                    },
+                    {
+                        type: 'stop',
+                        lon: 30.316650,
+                        lat: 59.914732
+                    }
+                ],
+                transport: 'car',
+                route_mode: 'fastest',
+                traffic_mode: 'jam'
+            };
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestData)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.result && data.result.length > 0 && data.result[0].maneuvers && data.result[0].maneuvers.length > 0) {
+                        let points = [];
+                        let time = 0;
+                        const {maneuvers} = data.result[0];
+                        maneuvers.slice(0, maneuvers.length - 1).forEach((maneuver) => {
+                            const localPoints = maneuver['outcoming_path']
+                                .geometry[0]
+                                .selection
+                                .replace("LINESTRING(", "")
+                                .replace(")", "")
+                                .split(" ");
+                            points = [...points, ...localPoints];
+                            time += Number(maneuver['outcoming_path'].duration);
+                        });
+                        let minutes = 0;
+                        let hours = 0;
+                        if(time > 60){
+                            minutes = Math.floor(time/60);
+                            if(minutes > 60){
+                                hours = Math.floor(minutes/60);
+                                minutes = minutes - hours * 60;
+                            }
+                            if (minutes < 10)
+                            {
+                                minutes = "0" + minutes;
+                            }
+                            if (hours < 10)
+                            {
+                                hours = "0" + hours;
+                            }
+                        }
+                        let times = hours + ":" + minutes;
+                        document.querySelector('.value_time').innerHTML = times;
+                        var coordinatesPairs = [];
+                        for (var i = 0; i < points.length; i += 2) {
+                            var lat = parseFloat(points[i + 1]);
+                            var lon = parseFloat(points[i]);
+                            if (!isNaN(lat) && !isNaN(lon)) {
+                                coordinatesPairs.push([lat, lon]);
+                                coord.push([lat,lon]);
+                            }
+                        }
+                        const lat1 = requestData.points[0].lat;
+                        const lon1 = requestData.points[0].lon;
+                        const url1 = `https://catalog.api.2gis.com/3.0/items/geocode?lat=${lat1}&lon=${lon1}&fields=items.point&key=${apiKey1}`;
+                        let adress1 = "";
+                        fetch(url1)
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error('Network response was not ok');
+                                }
+                                return response.json();
+                            })
+                            .then(data => {
+                                const items1 = data.result.items;
+                                console.log(items1)
+                                items1.slice(0, items1.length).forEach((item) => {
+                                    if(item.address_name){
+                                        document.querySelector('.adress1').innerHTML = item.address_name.split('/')[0];
+                                    }
+                                    if(item.full_name) {
+                                        document.querySelector('.gorod1').innerHTML = item.full_name.split(',')[0].split(' ')[0];
+                                    }
+                                });
+                            })
+                            .catch(error => {
+                                console.error('There was a problem with the fetch operation:', error);
+                            });
+                        const lat2 = requestData.points[1].lat;
+                        const lon2 = requestData.points[1].lon;
+                        const url2 = `https://catalog.api.2gis.com/3.0/items/geocode?lat=${lat2}&lon=${lon2}&fields=items.point&key=${apiKey2}`;
+                        let adress2 = "";
+                        fetch(url2)
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error('Network response was not ok');
+                                }
+                                return response.json();
+                            })
+                            .then(data => {
+                                const items0 = data.result.items;
+                                items0.slice(0, items0.length - 1).forEach((item) => {
+                                    if(item.address_name){
+                                        document.querySelector('.adress2').innerHTML = item.address_name.split('/')[0];
+                                    }
+                                    if(item.full_name){
+                                        document.querySelector('.gorod2').innerHTML = item.full_name.split(',')[0];
+                                    }
+                                });
+                            })
+                            .catch(error => {
+                                console.error('There was a problem with the fetch operation:', error);
+                            });
+                        if (coordinatesPairs.length > 0) {
+                            console.log("Загрузка маршрута")
+                            var route = L.polyline(coordinatesPairs, {color: '#00cc00',weight:'7'}).addTo(map);
+                            map.fitBounds(route.getBounds());
+                        } else {
+                            console.error('Координаты маршрута недействительны.');
+                        }
+                    } else {
+                        console.error('Ошибка при получении маршрута:', data.error.message || 'Неверный формат данных');
+                    }
+                })
+                .catch(error => console.error('Ошибка при отправке запроса:', error));
+        }
+        getRoute();
+        var icon = L.icon({
+            iconUrl: 'img/truck.png',
+            iconSize: [30, 30],
+            iconAnchor: [15, 15],
+            popupAnchor: [0, 0]
+        });
+        var marker = L.marker([59.934434, 30.309068], {icon: icon}).addTo(map);
+        function moveIconAlongRoute(routeCoordinates) {
+            var index = 0;
+            var interval = setInterval(function() {
+                if (index < routeCoordinates.length) {
+                    var latLng = routeCoordinates[index];
+                    marker.setLatLng(latLng);
+                    index++;
+                } else {
+                    clearInterval(interval);
+                }
+            }, 1000);
+        }
+        const routeCoordinates = coord;
+        moveIconAlongRoute(routeCoordinates);
+        console.log(routeCoordinates)
+    }
+    window.onload = function () {
+        initMap();
+    };
+</script>
+<script src="https://maps.api.2gis.ru/2.0/loader.js?pkg=full"></script>
+</body>
+</html>

@@ -1,0 +1,156 @@
+@font-face {
+    font-family: "Geologica";
+    src: local('Geologica'),url(./fonts/Geologica-Thin.ttf);
+}
+body{
+    font-family: "Geologica";
+    font-weight: 400;
+}
+.container{
+    width: 950px;
+    height: 545px;
+    background-color: #1B4687;
+    border-radius: 30px;
+}
+.title_zakaz{
+    width: 500px;
+    height: 26px;
+    font-size: 36px;
+    color: white;
+    padding-left: 40px;
+    padding-top: 20px;
+    font-weight: bolder;
+}
+.adress{
+    width: 80px;
+    height: 26px;
+    color: white;
+    font-size: 28px;
+    font-weight: bolder;
+    padding-left: 40px;
+    padding-top: 40px;
+}
+.title_adres{
+    width: 388px;
+    height: 100px;
+    padding-top: 40px;
+    padding-left: 60px;
+}
+.dotA{
+    height: 50px;
+    width: 260px;
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: row;
+}
+.dotA img{
+    width: 30px;
+    height: 30px;
+}
+.dot_top{
+    font-size: 20px;
+    letter-spacing: 0.15px;
+    color: white;
+    padding-bottom: 5px;
+}
+.dot_bottom{
+    font-size: 16px;
+    letter-spacing: 0.15px;
+    color: #B8B8B8;
+}
+.img_line{
+    position: relative;
+    padding-left: 10px;
+}
+.dotB{
+    height: 50px;
+    width: 260px;
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: row;
+    align-items: center;
+}
+.dotB img{
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+    width: 25px;
+    height: 25px;
+    padding-right: 5px;
+}
+.sodershc_zakaza{
+    padding-left: 65px;
+    padding-top: 60px;
+    display: flex;
+    flex-direction: row;
+}
+.material{
+    display: flex;
+    flex-direction: column;
+}
+.ves{
+    padding-left: 50px;
+    display: flex;
+    flex-direction: column;
+}
+.title_mat{
+    font-size: 24px;
+    color: #FFFFFF;
+}
+.mat{
+    font-size: 16px;
+    color:#FFFFFF;
+    padding-left: 10px;
+    padding-top: 10px;
+}
+.vs{
+    font-size: 16px;
+    color:#FFFFFF;
+    padding-left: 5px;
+    padding-top: 10px;
+}
+.button_header{
+    background-color: #DBE1FF;
+    background-size: 20px;
+    font-size: 20px;
+    font-weight: initial;
+    color: #2F3D52;
+    width: 350px;
+    height: 70px;
+    justify-content: center;
+    margin-top: 20px;
+    border-radius: 6px;
+    margin-left: 20px;
+}
+.time{
+    font-weight: 400;
+    height: 34px;
+    width: 278px;
+    background-color: #DBE1FF;
+    position: absolute;
+    margin-left: 600px;
+    margin-top: 20px;
+    border-radius: 4px;
+    text-align: center;
+    align-content: center;
+    justify-content: center;
+    align-items: center;
+    padding-top: 10px;
+    color: #2F3D52;
+}
+.exit{
+    position: absolute;
+    width: 15px;
+    height: 15px;
+    margin-left: 910px;
+    padding-top: 20px;
+}
+.map{
+    position: absolute;
+    padding-top: 100px;
+    padding-left: 425px;
+    margin-top: 100px;
+    margin-left: 400px;
+    width: 8%;
+    height: 40%;
+}
